@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo User mới</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Tạo User mới</h1>
+            <div class="header-actions">
+                <a href="/users" class="btn btn-secondary">Quay lại danh sách</a>
+            </div>
+        </header>
+        
+        <main>
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="alert alert-error"><%= error %></div>
+            <% } %>
+            
+            <form action="/users/create" method="POST" class="user-form">
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required 
+                           value="<%= typeof formData !== 'undefined' ? formData.email || '' : '' %>">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Mật khẩu *</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">Tên *</label>
+                        <input type="text" id="firstName" name="firstName" required
+                               value="<%= typeof formData !== 'undefined' ? formData.firstName || '' : '' %>">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="lastName">Họ *</label>
+                        <input type="text" id="lastName" name="lastName" required
+                               value="<%= typeof formData !== 'undefined' ? formData.lastName || '' : '' %>">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phoneNumber">Số điện thoại</label>
+                    <input type="tel" id="phoneNumber" name="phoneNumber"
+                           value="<%= typeof formData !== 'undefined' ? formData.phoneNumber || '' : '' %>">
+                </div>
+                
+                <div class="form-group">
+                    <label for="gender">Giới tính</label>
+                    <select id="gender" name="gender">
+                        <option value="">Chọn giới tính</option>
+                        <option value="M" <%= typeof formData !== 'undefined' && formData.gender === 'M' ? 'selected' : '' %>>Nam</option>
+                        <option value="F" <%= typeof formData !== 'undefined' && formData.gender === 'F' ? 'selected' : '' %>>Nữ</option>
+                        <option value="Other" <%= typeof formData !== 'undefined' && formData.gender === 'Other' ? 'selected' : '' %>>Khác</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="address">Địa chỉ</label>
+                    <textarea id="address" name="address" rows="3"><%= typeof formData !== 'undefined' ? formData.address || '' : '' %></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="roleId">Role ID</label>
+                        <input type="text" id="roleId" name="roleId"
+                               value="<%= typeof formData !== 'undefined' ? formData.roleId || '' : '' %>">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="positionId">Position ID</label>
+                        <input type="text" id="positionId" name="positionId"
+                               value="<%= typeof formData !== 'undefined' ? formData.positionId || '' : '' %>">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="image">URL Ảnh</label>
+                    <input type="url" id="image" name="image"
+                           value="<%= typeof formData !== 'undefined' ? formData.image || '' : '' %>">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Tạo User</button>
+                    <a href="/users" class="btn btn-secondary">Hủy</a>
+                </div>
+            </form>
+        </main>
+    </div>
+</body>
+</html>

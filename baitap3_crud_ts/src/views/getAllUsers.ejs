@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Danh sách User</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Danh sách User</h1>
+        <div class="header-actions">
+          <a href="/" class="btn btn-secondary">Về trang chủ</a>
+          <a href="/users/create" class="btn btn-success">Thêm User mới</a>
+        </div>
+      </header>
+
+      <main>
+        <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-error"><%= error %></div>
+        <% } %> <% if (users && users.length > 0) { %>
+        <div class="table-container">
+          <table class="user-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Họ tên</th>
+                <th>SĐT</th>
+                <th>Giới tính</th>
+                <th>Địa chỉ</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% users.forEach(user => { %>
+              <tr>
+                <td><%= user.id %></td>
+                <td><%= user.email %></td>
+                <td><%= user.firstName + ' ' + user.lastName %></td>
+                <td><%= user.phoneNumber || 'N/A' %></td>
+                <td><%= user.gender || 'N/A' %></td>
+                <td><%= user.address || 'N/A' %></td>
+                <td class="actions">
+                  <a
+                    href="/users/edit/<%= user.id %>"
+                    class="btn btn-warning btn-sm"
+                    >Sửa</a
+                  >
+                  <form
+                    action="/users/delete/<%= user.id %>"
+                    method="POST"
+                    style="display: inline"
+                    onsubmit="return confirm('Bạn có chắc muốn xóa user này?')"
+                  >
+                    <button type="submit" class="btn btn-danger btn-sm">
+                      Xóa
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+        <% } else { %>
+        <div class="empty-state">
+          <h3>Chưa có user nào</h3>
+          <p>Hãy tạo user đầu tiên!</p>
+          <a href="/users/create" class="btn btn-primary">Tạo User mới</a>
+        </div>
+        <% } %>
+      </main>
+    </div>
+  </body>
+</html>
