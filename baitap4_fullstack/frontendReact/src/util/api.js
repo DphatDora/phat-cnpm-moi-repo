@@ -11,3 +11,11 @@ export const loginApi = (email, password) => {
 export const getProfileApi = () => {
   return axios.get("/api/users/profile");
 };
+
+export const getCategoriesApi = () => {
+  return axios.get("/api/category");
+};
+
+export const getProductsByCategoryApi = (categoryId, page = 1) => {
+  return axios.get(`/api/product/${categoryId}?page=${page}`);
+};

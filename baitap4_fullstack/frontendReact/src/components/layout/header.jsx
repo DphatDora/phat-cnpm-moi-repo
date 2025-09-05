@@ -15,6 +15,7 @@ export default function Header() {
     <header className="header">
       <nav className="nav">
         <Link to="/">Home</Link>
+        <Link to="/products">Product</Link>
         {!token && <Link to="/register">Register</Link>}
         {!token && <Link to="/login">Login</Link>}
         {token && <Link to="/profile">Profile</Link>}

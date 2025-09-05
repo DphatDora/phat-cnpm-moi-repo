@@ -7,6 +7,8 @@ dotenv.config();
 const { sequelize } = require("./src/config/database");
 const authRoutes = require("./src/routes/authRoutes");
 const userRoutes = require("./src/routes/userRoutes");
+const categoryRoutes = require("./src/routes/categoryRoutes");
+const productRoutes = require("./src/routes/productRoutes");
 
 const app = express();
 
@@ -17,6 +19,8 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/category", categoryRoutes);
+app.use("/api/product", productRoutes);
 
 // Health check
 app.get("/health", (req, res) => {

@@ -3,6 +3,7 @@ import Home from "./pages/Home.jsx";
 import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
 import Profile from "./pages/Profile.jsx";
+import Product from "./pages/ProductPage.jsx";
 import Header from "./components/layout/header.jsx";
 import { AuthProvider, useAuth } from "./components/context/auth.context.jsx";
 
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/products" element={<Product />} />
           <Route
             path="/profile"
             element={
