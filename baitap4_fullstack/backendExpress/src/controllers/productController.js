@@ -2,6 +2,8 @@ const {
   getAllProducts,
   getProductsByCategory,
 } = require("../services/productService");
+const client = require("../config/elasticClient");
+const { indexName } = require("../services/searchService");
 
 async function getProducts(req, res) {
   try {
@@ -34,4 +36,99 @@ async function getProductsByCat(req, res) {
   }
 }
 
-module.exports = { getProducts, getProductsByCat };
+async function searchProducts(req, res) {
+  try {
+    const { name } = req.query;
+
+    const result = await client.search({
+      index: "products",
+      body: {
+        query: {
+          match: {
+            name: {
+              query: name,
+              fuzziness: "AUTO",
+            },
+          },
+        },
+      },
+    });
+
+    const hits = result.hits.hits.map((hit) => hit._source);
+
+    res.json({ success: true, message: "Search products", products: hits });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Search failed" });
+  }
+}
+
+async function filterProducts(req, res) {
+  try {
+    const { category, minPrice, maxPrice, keyword, sort } = req.query;
+
+    const must = [];
+    const filter = [];
+
+    // Tìm theo keyword (fuzzy)
+    if (keyword) {
+      must.push({
+        multi_match: {
+          query: keyword,
+          fields: ["name", "description"],
+          fuzziness: "AUTO",
+        },
+      });
+    }
+
+    // Filter theo category
+    if (category) {
+      filter.push({ term: { category } });
+    }
+
+    // Filter theo price
+    if (minPrice || maxPrice) {
+      const range = {};
+      if (minPrice) range.gte = parseFloat(minPrice);
+      if (maxPrice) range.lte = parseFloat(maxPrice);
+      filter.push({ range: { price: range } });
+    }
+
+    // Sort (newest, price_asc, price_desc)
+    let sortOption = [];
+    if (sort === "newest") {
+      sortOption = [{ createdAt: { order: "desc" } }];
+    } else if (sort === "price_asc") {
+      sortOption = [{ price: { order: "asc" } }];
+    } else if (sort === "price_desc") {
+      sortOption = [{ price: { order: "desc" } }];
+    }
+
+    const result = await client.search({
+      index: "products",
+      body: {
+        query: {
+          bool: {
+            must,
+            filter,
+          },
+        },
+        sort: sortOption,
+      },
+    });
+
+    const hits = result.hits.hits.map((hit) => hit._source);
+
+    res.json({ success: true, message: "Filter products", products: hits });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Filter failed" });
+  }
+}
+
+module.exports = {
+  getProducts,
+  getProductsByCat,
+  searchProducts,
+  filterProducts,
+};

@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { getCategoriesApi, getProductsByCategoryApi } from "../util/api";
 import Category from "../components/product/Category";
 import Product from "../components/product/Product";
+import Search from "../components/product/Search";
+import Filter from "../components/product/Filter";
 
 export default function ProductPage() {
   const [categories, setCategories] = useState([]);
@@ -85,8 +87,18 @@ export default function ProductPage() {
     setActiveCategoryId(categoryId);
   };
 
+  const handleProductSelect = (product) => {
+    //
+    console.log("Selected product:", product);
+  };
+
   return (
     <div className="product-page">
+      <div className="product-tools">
+        <Search onProductSelect={handleProductSelect} />
+        <Filter />
+      </div>
+
       <Category
         categories={categories}
         activeCategory={activeCategoryId}

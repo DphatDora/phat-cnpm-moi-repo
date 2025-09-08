@@ -9,7 +9,10 @@ const authRoutes = require("./src/routes/authRoutes");
 const userRoutes = require("./src/routes/userRoutes");
 const categoryRoutes = require("./src/routes/categoryRoutes");
 const productRoutes = require("./src/routes/productRoutes");
-
+const {
+  createIndex,
+  syncAllProducts,
+} = require("./src/services/searchService");
 const app = express();
 
 // Middlewares
@@ -36,6 +39,11 @@ async function start() {
 
     await sequelize.sync();
     console.log("✅ Database synced successfully");
+
+    await createIndex();
+    console.log("✅ Create index successfully");
+
+    // await syncAllProducts();
 
     app.listen(PORT, () => {
       console.log(`==> Server is running on port ${PORT}`);
