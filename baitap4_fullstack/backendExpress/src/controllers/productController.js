@@ -1,6 +1,9 @@
 const {
   getAllProducts,
   getProductsByCategory,
+  getProductDetailService,
+  buyProductService,
+  commentProductService,
 } = require("../services/productService");
 const client = require("../config/elasticClient");
 const { indexName } = require("../services/searchService");
@@ -70,7 +73,6 @@ async function filterProducts(req, res) {
     const must = [];
     const filter = [];
 
-    // Tìm theo keyword (fuzzy)
     if (keyword) {
       must.push({
         multi_match: {
@@ -81,12 +83,10 @@ async function filterProducts(req, res) {
       });
     }
 
-    // Filter theo category
     if (category) {
       filter.push({ term: { category } });
     }
 
-    // Filter theo price
     if (minPrice || maxPrice) {
       const range = {};
       if (minPrice) range.gte = parseFloat(minPrice);
@@ -94,7 +94,6 @@ async function filterProducts(req, res) {
       filter.push({ range: { price: range } });
     }
 
-    // Sort (newest, price_asc, price_desc)
     let sortOption = [];
     if (sort === "newest") {
       sortOption = [{ createdAt: { order: "desc" } }];
@@ -126,9 +125,63 @@ async function filterProducts(req, res) {
   }
 }
 
+async function getProductDetail(req, res) {
+  try {
+    const { id } = req.params;
+    const result = await getProductDetailService(id);
+    if (!result)
+      return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
+
+    res.json({
+      success: true,
+      message: "Chi tiết sản phẩm",
+      product: result.product,
+      soldQuantity: result.soldQuantity,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Lỗi server" });
+  }
+}
+
+async function buyProduct(req, res) {
+  try {
+    const { productId, quantity } = req.body;
+    const userId = req.user.id; // giả sử đã có middleware auth
+
+    const purchase = await buyProductService(userId, productId, quantity);
+    if (!purchase)
+      return res.status(404).json({ message: "Sản phẩm không tồn tại" });
+
+    res.json({ success: true, message: "Mua hàng thành công", purchase });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Mua hàng thất bại" });
+  }
+}
+
+async function commentProduct(req, res) {
+  try {
+    const { productId, comment } = req.body;
+    const userId = req.user.id;
+
+    const newComment = await commentProductService(userId, productId, comment);
+    if (!newComment)
+      return res.status(404).json({ message: "Sản phẩm không tồn tại" });
+
+    res.json({ success: true, message: "Đã bình luận", comment: newComment });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Bình luận thất bại" });
+  }
+}
+
 module.exports = {
   getProducts,
   getProductsByCat,
   searchProducts,
   filterProducts,
+  getProductDetail,
+  buyProduct,
+  commentProduct,
 };
