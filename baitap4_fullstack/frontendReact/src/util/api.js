@@ -34,3 +34,11 @@ export const filterProductsApi = (filters = {}) => {
 
   return axios.get(`/api/product/filter?${params.toString()}`);
 };
+
+export const getProductDetailApi = (productId) => {
+  return axios.get(`/api/product/detail/${productId}`);
+};
+
+export const commentProductApi = (productId, comment) => {
+  return axios.post("/api/product/comment", { productId, comment });
+};
